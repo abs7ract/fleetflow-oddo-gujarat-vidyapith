@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6">Trip Dispatcher</h2>
+
+{% if error %}
+<div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded text-red-700 font-medium">{{ error }}</div>
+{% endif %}
+{% if success %}
+<div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded text-green-700 font-medium">{{ success }}</div>
+{% endif %}
+
+<div class="bg-white p-6 rounded shadow-sm border border-gray-200 mb-8">
+    <h3 class="font-bold text-lg mb-4 text-gray-800">Dispatch New Trip</h3>
+    <form id="dispatch-form" method="POST" action="/dispatch" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <input type="hidden" name="create_trip" value="1">
+        
+        <div>
+            <label class="block text-sm text-gray-600 mb-1">Available Vehicle</label>
+            <select id="vehicle-select" name="vehicle_id" required class="w-full border p-2 rounded bg-white">
+                <option value="" disabled selected>-- Select Vehicle --</option>
+                {% for vehicle in vehicles %}
+                    <option value="{{ vehicle.id }}" data-capacity="{{ vehicle.max_load_capacity }}">
+                        {{ vehicle.name_model }} (Cap: {{ vehicle.max_load_capacity }}kg)
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label class="block text-sm text-gray-600 mb-1">Available Driver</label>
+            <select name="driver_id" required class="w-full border p-2 rounded bg-white">
+                <option value="" disabled selected>-- Select Driver --</option>
+                {% for driver in drivers %}
+                    <option value="{{ driver.id }}">{{ driver.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label class="block text-sm text-gray-600 mb-1">Cargo Weight (kg)</label>
+            <input type="number" step="0.01" id="cargo-weight" name="cargo_weight" required class="w-full border p-2 rounded" placeholder="Must be <= Max Capacity">
+        </div>
+        
+        <div>
+            <button type="submit" class="w-full bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 transition-colors">Dispatch Trip</button>
+        </div>
+    </form>
+</div>
+
+<div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-4 bg-gray-50 border-b">
+        <h3 class="font-bold text-gray-700">Trip Management Lifecycle</h3>
+    </div>
+    <table class="w-full text-left">
+        <thead class="bg-gray-100 text-gray-600 text-sm border-b">
+            <tr>
+                <th class="p-4">Trip ID</th>
+                <th class="p-4">Vehicle</th>
+                <th class="p-4">Driver</th>
+                <th class="p-4">Cargo Weight</th>
+                <th class="p-4">Status</th>
+                <th class="p-4">Action</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for trip in trips %}
+            <tr class="hover:bg-gray-50">
+                <td class="p-4 text-gray-500 font-medium">TRP-{{ trip.id }}</td>
+                <td class="p-4">{{ trip.name_model }} ({{ trip.license_plate }})</td>
+                <td class="p-4">{{ trip.driver_name }}</td>
+                <td class="p-4">{{ trip.cargo_weight }} kg</td>
+                <td class="p-4">
+                    <span class="px-2 py-1 text-xs rounded-full font-semibold
+                        {% if trip.status == 'Dispatched' %} bg-blue-100 text-blue-800
+                        {% elif trip.status == 'Completed' %} bg-green-100 text-green-800
+                        {% elif trip.status == 'Cancelled' %} bg-red-100 text-red-800
+                        {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                        {{ trip.status }}
+                    </span>
+                </td>
+                <td class="p-4">
+                    {% if trip.status == 'Dispatched' %}
+                    <form method="POST" action="/dispatch" class="inline">
+                        <input type="hidden" name="complete_trip" value="1">
+                        <input type="hidden" name="trip_id" value="{{ trip.id }}">
+                        <input type="hidden" name="ret_vehicle_id" value="{{ trip.vehicle_id }}">
+                        
+                        <input type="hidden" name="ret_driver_id" value="{{ trip.driver_id }}">
+                        
+                        <button type="submit" class="text-green-600 text-sm hover:underline font-bold">Mark Completed</button>
+                    </form>
+                    {% else %}
+                    <span class="text-gray-400 text-sm">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="p-4 text-center text-gray-500">No trips logged yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

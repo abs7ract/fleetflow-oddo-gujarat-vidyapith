@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6">Vehicle Registry</h2>
+
+<form method="POST" action="/vehicles" class="bg-white p-6 rounded shadow-sm border border-gray-200 mb-8 flex gap-4 items-end">
+    <div class="flex-1">
+        <label class="block text-sm text-gray-600 mb-1">Name/Model</label>
+        <input type="text" name="name_model" required class="w-full border p-2 rounded">
+    </div>
+    <div class="flex-1">
+        <label class="block text-sm text-gray-600 mb-1">License Plate</label>
+        <input type="text" name="license_plate" required class="w-full border p-2 rounded">
+    </div>
+    <div class="flex-1">
+        <label class="block text-sm text-gray-600 mb-1">Max Load (kg)</label>
+        <input type="number" step="0.01" name="max_load_capacity" required class="w-full border p-2 rounded">
+    </div>
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700">Add Asset</button>
+</form>
+
+<div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+    <table class="w-full text-left">
+        <thead class="bg-gray-100 text-gray-600 text-sm border-b">
+            <tr>
+                <th class="p-4">ID</th><th class="p-4">Name</th><th class="p-4">Plate</th>
+                <th class="p-4">Capacity</th><th class="p-4">Status</th><th class="p-4">Action</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for vehicle in vehicles %}
+            <tr class="hover:bg-gray-50">
+                <td class="p-4">{{ vehicle.id }}</td>
+                <td class="p-4 font-medium">{{ vehicle.name_model }}</td>
+                <td class="p-4 text-gray-500">{{ vehicle.license_plate }}</td>
+                <td class="p-4">{{ vehicle.max_load_capacity }} kg</td>
+                <td class="p-4">
+                    <span class="px-2 py-1 text-xs rounded-full 
+                        {% if vehicle.status == 'Available' %} bg-green-100 text-green-800
+                        {% elif vehicle.status == 'On Trip' %} bg-blue-100 text-blue-800
+                        {% elif vehicle.status == 'In Shop' %} bg-red-100 text-red-800
+                        {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                        {{ vehicle.status }}
+                    </span>
+                </td>
+                <td class="p-4">
+                    {% if vehicle.status != 'Out of Service' %}
+                    <form action="/retire_vehicle/{{ vehicle.id }}" method="POST" onsubmit="return confirm('Retire this vehicle?');">
+                        <button type="submit" class="text-red-600 text-sm hover:underline font-medium">Set Out of Service</button>
+                    </form>
+                    {% else %}
+                    <span class="text-gray-400 text-sm">Retired</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="p-4 text-center text-gray-500">No vehicles found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

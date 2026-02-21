@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6">Maintenance Logs</h2>
+
+<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded shadow-sm">
+    <p class="text-sm text-yellow-800 font-medium">Auto-Logic Active: Logging a vehicle here will automatically set its status to "In Shop" and hide it from Dispatchers.</p>
+</div>
+
+<form method="POST" action="/maintenance" class="bg-white p-6 rounded shadow-sm border border-gray-200 mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <div>
+        <label class="block text-sm text-gray-600 mb-1">Select Vehicle</label>
+        <select name="vehicle_id" required class="w-full border p-2 rounded bg-white">
+            <option value="" disabled selected>-- Choose Asset --</option>
+            {% for vehicle in vehicles %}
+                <option value="{{ vehicle.id }}">{{ vehicle.name_model }} ({{ vehicle.license_plate }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm text-gray-600 mb-1">Service Date</label>
+        <input type="date" name="service_date" required class="w-full border p-2 rounded">
+    </div>
+    <div>
+        <label class="block text-sm text-gray-600 mb-1">Cost ($)</label>
+        <input type="number" step="0.01" name="cost" required class="w-full border p-2 rounded">
+    </div>
+    <div class="md:col-span-3">
+        <label class="block text-sm text-gray-600 mb-1">Maintenance Description</label>
+        <input type="text" name="description" placeholder="e.g., Oil change, Brake pad replacement..." required class="w-full border p-2 rounded">
+    </div>
+    <div>
+        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">Log Maintenance</button>
+    </div>
+</form>
+
+<div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-4 bg-gray-50 border-b">
+        <h3 class="font-bold text-gray-700">Recent Service History</h3>
+    </div>
+    <table class="w-full text-left">
+        <thead class="bg-gray-100 text-gray-600 text-sm border-b">
+            <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">Vehicle</th>
+                <th class="p-4">Plate</th>
+                <th class="p-4">Description</th>
+                <th class="p-4">Cost</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for log in logs %}
+            <tr class="hover:bg-gray-50">
+                <td class="p-4 text-gray-600">{{ log.service_date }}</td>
+                <td class="p-4 font-medium">{{ log.name_model }}</td>
+                <td class="p-4 text-gray-500">{{ log.license_plate }}</td>
+                <td class="p-4">{{ log.description }}</td>
+                <td class="p-4 font-bold text-gray-800">${{ log.cost }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="p-4 text-center text-gray-500">No maintenance records found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

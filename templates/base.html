@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-100 flex h-screen font-sans">
+
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <div class="p-6 border-b border-gray-200">
+            <h1 class="text-2xl font-bold text-blue-600">FleetFlow</h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <a href="/dashboard" class="block px-4 py-2 rounded text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-colors">Command Center</a>
+
+            {% if session.role == 'Manager' %}
+            <a href="/vehicles" class="block px-4 py-2 rounded text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-colors">Vehicle Registry</a>
+            <a href="/maintenance" class="block px-4 py-2 rounded text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-colors">Maintenance Logs</a>
+            {% endif %}
+
+            {% if session.role == 'Dispatcher' %}
+            <a href="/dispatch" class="block px-4 py-2 rounded text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-colors">Trip Dispatcher</a>
+            {% endif %}
+
+            {% if session['role'] == 'Financial Analyst' %}
+    <a href="{{ url_for('expenses') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+        Expenses & Fuel
+    </a>
+    <a href="{{ url_for('analytics') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+        Analytics & Reports
+    </a>
+{% endif %}
+        </nav>
+        <div class="p-4 border-t border-gray-200">
+            <a href="/logout" class="block px-4 py-2 text-red-600 font-bold hover:bg-red-50 rounded transition-colors text-center">Logout</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

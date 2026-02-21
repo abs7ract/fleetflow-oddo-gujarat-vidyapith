@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6">Operational Analytics & Financial Reports</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded shadow-sm border border-gray-200">
+        <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wide">Fleet Fuel Efficiency [cite: 44]</h3>
+        <p class="text-4xl font-bold text-blue-600 mt-2">{{ efficiency }} <span class="text-lg text-gray-500">km / L</span></p>
+    </div>
+    
+    <div class="bg-white p-6 rounded shadow-sm border border-gray-200">
+        <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wide">Overall Vehicle ROI [cite: 45]</h3>
+        <p class="text-4xl font-bold text-green-600 mt-2">{{ roi }}%</p>
+        <p class="text-xs text-gray-400 mt-2">Calculated as: $\frac{\text{Revenue} - (\text{Maintenance} + \text{Fuel})}{\text{Acquisition Cost}}$</p>
+    </div>
+
+    <div class="bg-white p-6 rounded shadow-sm border border-gray-200">
+        <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wide">Total Operating Cost [cite: 36]</h3>
+        <p class="text-4xl font-bold text-red-600 mt-2">${{ total_cost }}</p>
+    </div>
+</div>
+
+<div class="bg-white p-6 rounded shadow-sm border border-gray-200 flex justify-between items-center">
+    <div>
+        <h3 class="font-bold text-gray-800">Monthly Payroll & Health Audit [cite: 46]</h3>
+        <p class="text-sm text-gray-500">Export the latest unified fleet data.</p>
+    </div>
+    <button class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Export PDF/CSV</button>
+</div>
+{% endblock %}

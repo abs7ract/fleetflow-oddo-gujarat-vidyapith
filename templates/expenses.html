@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6">Expense & Fuel Logging</h2>
+
+<form method="POST" action="/expenses" class="bg-white p-6 rounded shadow-sm border border-gray-200 mb-8 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+    <div class="md:col-span-2">
+        <label class="block text-sm text-gray-600 mb-1">Select Vehicle</label>
+        <select name="vehicle_id" required class="w-full border p-2 rounded">
+            {% for vehicle in vehicles %}
+                <option value="{{ vehicle.id }}">{{ vehicle.name_model }} ({{ vehicle.license_plate }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm text-gray-600 mb-1">Liters</label>
+        <input type="number" step="0.01" name="liters" required class="w-full border p-2 rounded">
+    </div>
+    <div>
+        <label class="block text-sm text-gray-600 mb-1">Total Cost ($)</label>
+        <input type="number" step="0.01" name="cost" required class="w-full border p-2 rounded">
+    </div>
+    <div>
+        <label class="block text-sm text-gray-600 mb-1">Date</label>
+        <input type="date" name="log_date" required class="w-full border p-2 rounded">
+    </div>
+    <div class="md:col-span-5">
+        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">Log Fuel Expense</button>
+    </div>
+</form>
+
+<div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+    <table class="w-full text-left">
+        <thead class="bg-gray-100 text-gray-600 text-sm border-b">
+            <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">Vehicle</th>
+                <th class="p-4">Liters</th>
+                <th class="p-4">Cost</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for log in logs %}
+            <tr class="hover:bg-gray-50">
+                <td class="p-4">{{ log.log_date }}</td>
+                <td class="p-4 font-medium">{{ log.name_model }} ({{ log.license_plate }})</td>
+                <td class="p-4">{{ log.liters }} L</td>
+                <td class="p-4 text-red-600 font-bold">${{ log.cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-3xl font-bold mb-6">Driver Profiles & Compliance</h2>
+
+<form method="POST" action="/drivers" class="bg-white p-6 rounded shadow-sm border border-gray-200 mb-8 flex gap-4 items-end">
+    <input type="hidden" name="add_driver" value="1">
+    <div class="flex-1">
+        <label class="block text-sm text-gray-600 mb-1">Driver Name</label>
+        <input type="text" name="name" required class="w-full border p-2 rounded">
+    </div>
+    <div class="flex-1">
+        <label class="block text-sm text-gray-600 mb-1">License Expiry Date</label>
+        <input type="date" name="license_expiry" required class="w-full border p-2 rounded">
+    </div>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">Add Driver</button>
+</form>
+
+<div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+    <table class="w-full text-left">
+        <thead class="bg-gray-100 text-gray-600 text-sm border-b">
+            <tr>
+                <th class="p-4">Driver Name</th>
+                <th class="p-4">License Expiry </th>
+                <th class="p-4">Safety Score </th>
+                <th class="p-4">Current Status [cite: 41]</th>
+                <th class="p-4">Change Status</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for driver in drivers %}
+            <tr class="hover:bg-gray-50">
+                <td class="p-4 font-medium">{{ driver.name }}</td>
+                <td class="p-4">{{ driver.license_expiry }}</td>
+                <td class="p-4 text-green-600 font-bold">{{ driver.safety_score }}/100</td>
+                <td class="p-4">
+                    <span class="px-2 py-1 text-xs rounded-full 
+                        {% if driver.status == 'Available' %} bg-green-100 text-green-800
+                        {% elif driver.status == 'On Trip' %} bg-blue-100 text-blue-800
+                        {% elif driver.status == 'Suspended' %} bg-red-100 text-red-800
+                        {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                        {{ driver.status }}
+                    </span>
+                </td>
+                <td class="p-4">
+                    <form method="POST" action="/drivers" class="flex gap-2">
+                        <input type="hidden" name="update_status" value="1">
+                        <input type="hidden" name="driver_id" value="{{ driver.id }}">
+                        <select name="new_status" class="border p-1 rounded text-sm">
+                            <option value="Available">Available</option>
+                            <option value="Off Duty">Off Duty</option>
+                            <option value="Suspended">Suspended</option>
+                        </select>
+                        <button type="submit" class="bg-gray-200 px-2 py-1 rounded text-sm hover:bg-gray-300">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
